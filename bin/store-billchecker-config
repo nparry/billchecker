@@ -1,0 +1,16 @@
+#!/usr/bin/env ruby
+
+require 'billchecker'
+require 'json'
+
+filename = ARGV[0] || '-'
+
+json_source = if filename == '-' then STDIN else File.new(filename) end
+json = JSON.load(json_source)
+
+store = BillStore.new()
+
+json.each do |name, value|
+  store.set_account_info(name, value)
+end
+

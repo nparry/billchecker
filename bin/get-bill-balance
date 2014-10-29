@@ -1,0 +1,25 @@
+#!/usr/bin/env ruby
+
+require 'billchecker'
+
+account_name = ARGV[0]
+raise "Account name must be specified" if account_name.nil?
+
+BillChecker.session do |billchecker|
+  store = BillStore.new()
+
+  info = store.get_account_info(account_name)
+  raise "Account info missing for #{account_name}" if info.nil?
+
+  old_balance = store.get_balance(account_name) || "unknown"
+  new_balance = billchecker.get_balance(info)
+
+  notifier = BillNotifier.new(account_name, info)
+  if old_balance == new_balance then
+    notifier.balance_unchanged(old_balance)
+  else
+    notifier.balance_changed(old_balance, new_balance)
+    store.set_balance(account_name, new_balance)
+  end
+end
+
