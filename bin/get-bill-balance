@@ -6,7 +6,7 @@ account_name = ARGV[0]
 raise "Account name must be specified" if account_name.nil?
 
 BillChecker.session do |billchecker|
-  store = BillStore.new()
+  store = BillStore.new
 
   info = store.get_account_info(account_name)
   raise "Account info missing for #{account_name}" if info.nil?
