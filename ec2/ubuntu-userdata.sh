@@ -35,14 +35,15 @@ service chronos restart
 
 # Get pre-configured Redis dump to bootstrap our Redis
 mkdir -p /var/run/redis
-curl https://s3.amazonaws.com/billchecker.nparry.com/redis-dump.rdb > /var/run/redis/dump.rdb
+curl -s https://s3.amazonaws.com/billchecker.nparry.com/redis-dump.rdb > /var/run/redis/dump.rdb
 chown -R ubuntu:ubuntu /var/run/redis
-chmod a+rw /var/run/redis.dump.rdb
+chmod a+rw /var/run/redis/dump.rdb
 
 # Run Redis via Marathon
 # We should really use the bridged networking here, as we are abusing host networking
 # ......but oh well
-curl -XPOST -HContent-Type:application/json --data @- http://localhost:8080/v2/apps <<JSON_END
+until curl -s http://localhost:8080/ping | grep pong; do sleep 10; done
+curl -s -XPOST -HContent-Type:application/json --data @- http://localhost:8080/v2/apps <<JSON_END
 {
   "id": "billchecker-storage",
   "cpus": 0.1,
