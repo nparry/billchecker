@@ -92,20 +92,9 @@ for ACCOUNT_ID in $(redis-cli keys \* | sort); do
     "name": "billchecker_$ACCOUNT_ID",
     "owner": "nparry@gmail.com",
     "schedule": "R/$START_TIME/PT4H",
-    "container": {
-      "type": "DOCKER",
-      "image": "nparry/billchecker",
-      "network": "HOST"
-    },
     "cpus": "0.5",
     "mem": "128",
-    "command": "/usr/local/bin/get-bill-balance $ACCOUNT_ID",
-    "environmentVariables": [
-      { "name": "REDIS_URL",        "value": "redis://localhost:6379" },
-      { "name": "BILLSTORE_KEY",    "value": "$BILLSTORE_KEY" },
-      { "name": "TWITTER_SETTINGS", "value": "$TWITTER_SETTINGS" }
-    ]
+    "command": "docker run --rm --net=host -e REDIS_URL=\"redis://localhost:6379\" -e BILLSTORE_KEY=\"$BILLSTORE_KEY\" -e TWITTER_SETTINGS=\"$TWITTER_SETTINGS\" nparry/billchecker /usr/local/bin/get-bill-balance $ACCOUNT_ID"
   }
 JSON_END
 done
-
