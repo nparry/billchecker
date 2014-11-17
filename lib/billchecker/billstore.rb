@@ -35,9 +35,16 @@ class BillStore
     value.to_f unless value.nil?
   end
 
-  def set_balance(name, value)
-    @log.info("Storing account balance #{value} for #{name}")
-    @redis.hset(name, "balance", value.to_s)
+  def balance_unchanged(name)
+    timestamp = Time.now
+    @log.info("Updating last check timestamp to #{timestamp} for #{name}")
+    @redis.hset(name, "last_check", timestamp.to_s)
+  end
+
+  def balance_changed(name, value)
+    timestamp = Time.now
+    @log.info("Storing account balance #{value} with last check timestamp #{timestamp} for #{name}")
+    @redis.hmset(name, "balance", value.to_s, "last_check", timestamp.to_s)
   end
 end
 

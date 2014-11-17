@@ -3,10 +3,9 @@ require 'base64'
 require 'json'
 
 class BillNotifier
-  def initialize(account_name, info)
+  def initialize
     @log = Logger.new(STDOUT)
     @log.level = Logger::INFO
-    @display_name = info[:display_name] || account_name
     @config = begin
       JSON.parse(Base64.decode64(ENV["TWITTER_SETTINGS"]), :symbolize_names => true)
     rescue
@@ -20,12 +19,12 @@ class BillNotifier
     end
   end
 
-  def balance_unchanged(old_balance)
-    @log.info("Balance for #{@display_name} unchanged at '#{old_balance}'")
+  def balance_unchanged(name, old_balance)
+    @log.info("Balance for #{@name} unchanged at '#{old_balance}'")
   end
 
-  def balance_changed(old_balance, new_balance)
-    notify("Balance for #{@display_name} changed from '#{old_balance}' to '#{new_balance}'")
+  def balance_changed(name, old_balance, new_balance)
+    notify("Balance for #{@name} changed from '#{old_balance}' to '#{new_balance}'")
   end
 
   private
