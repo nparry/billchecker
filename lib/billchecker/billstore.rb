@@ -2,6 +2,7 @@ require 'redis'
 require 'json'
 require 'openssl'
 require 'encryptor'
+require 'time'
 
 class BillStore
 
@@ -17,7 +18,13 @@ class BillStore
     @log.info("Retrieving account info for #{name}")
     data = @redis.hgetall(name)
     return nil if data.empty?
-    JSON.parse(Encryptor.decrypt(data["value"], :key => @key, :iv => data["iv"], :salt => data["salt"]), :symbolize_names => true)
+    info = JSON.parse(Encryptor.decrypt(data["value"], :key => @key, :iv => data["iv"], :salt => data["salt"]), :symbolize_names => true)
+    info[:display_name] = name unless info[:display_name]
+    info
+  end
+
+  def all_account_info
+    Hash[@redis.keys("*").map { |k| [k, get_account_info(k)] }]
   end
 
   def set_account_info(name, data)
@@ -33,6 +40,13 @@ class BillStore
     value = @redis.hget(name, "balance")
     @log.info("Found account balance #{value} for #{name}")
     value.to_f unless value.nil?
+  end
+
+  def get_last_check_time(name)
+    @log.info("Retrieving last check timestamp for #{name}")
+    value = @redis.hget(name, "last_check")
+    @log.info("Found last check timestamp #{value} for #{name}")
+    Time.parse(value) unless value.nil?
   end
 
   def balance_unchanged(name)

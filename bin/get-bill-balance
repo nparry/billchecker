@@ -12,15 +12,14 @@ BillChecker.session do |billchecker|
   info = store.get_account_info(account_name)
   raise "Account info missing for #{account_name}" if info.nil?
 
-  display_name = info[:display_name] || account_name
   old_balance = store.get_balance(account_name) || "unknown"
   new_balance = billchecker.get_balance(info)
 
   if old_balance == new_balance then
-    notifier.balance_unchanged(display_name, old_balance)
+    notifier.balance_unchanged(info[:display_name], old_balance)
     store.balance_unchanged(account_name)
   else
-    notifier.balance_changed(display_name, old_balance, new_balance)
+    notifier.balance_changed(info[:display_name], old_balance, new_balance)
     store.balance_changed(account_name, new_balance)
   end
 end

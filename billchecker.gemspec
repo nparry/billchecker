@@ -10,6 +10,7 @@ Gem::Specification.new do |s|
 
   s.executables << 'get-bill-balance'
   s.executables << 'store-billchecker-config'
+  s.executables << 'process-bill-stream'
 
   s.add_runtime_dependency 'capybara',  '~> 2.4'
   s.add_runtime_dependency 'poltergeist',  '~> 1.5'
