@@ -43,6 +43,9 @@ chmod a+rw /var/run/redis/dump.rdb
 mkdir -p /var/lib/billchecker
 curl -s https://s3.amazonaws.com/billchecker.nparry.com/twitter_settings.base64.des3 > /var/lib/billchecker/twitter_settings.base64.des3
 
+BILLSTORE_KEY="BILLSTORE_KEY_VALUE"
+TWITTER_SETTINGS=$(cat /var/lib/billchecker/twitter_settings.base64.des3 | openssl des3 -d -k $BILLSTORE_KEY)
+
 # Run Redis via Marathon
 # We should really use the bridged networking here, as we are abusing host networking
 # ......but oh well
@@ -73,16 +76,36 @@ curl -Ls -XPOST -HContent-Type:application/json --data @- http://localhost:8080/
 }
 JSON_END
 
-# Submit jobs to Chronos. Use the keys in Redis to auto-figure-out the jobs we need
 echo "Waiting for Redis to start"
 until redis-cli ping | grep PONG; do sleep 10; done
 
+echo "Starting BillStreamer via Marathon"
+curl -Ls -XPOST -HContent-Type:application/json --data @- http://localhost:8080/v2/apps <<JSON_END
+{
+  "id": "billstreamer",
+  "cpus": 0.1,
+  "mem": 32,
+  "instances": 1,
+  "cmd": "/usr/local/bin/process-bill-stream",
+  "container": {
+    "type": "DOCKER",
+    "docker": {
+      "image": "nparry/billchecker"
+    }
+  },
+  "env": {
+    "REDIS_URL": "redis://localhost:6379",
+    "BILLSTORE_KEY": "$BILLSTORE_KEY",
+    "TWITTER_SETTINGS": "$TWITTER_SETTINGS"
+  }
+}
+JSON_END
+
+# Submit jobs to Chronos. Use the keys in Redis to auto-figure-out the jobs we need
 echo "Waiting for Chronos to start"
 until curl -s http://localhost:4400/ping | grep pong; do sleep 10; done
 
 echo "Submitting Billchecker jobs to Chronos"
-BILLSTORE_KEY="BILLSTORE_KEY_VALUE"
-TWITTER_SETTINGS=$(cat /var/lib/billchecker/twitter_settings.base64.des3 | openssl des3 -d -k $BILLSTORE_KEY)
 START_OFFSET="0"
 for ACCOUNT_ID in $(redis-cli keys \* | sort); do
   START_OFFSET=$(($START_OFFSET+5))
