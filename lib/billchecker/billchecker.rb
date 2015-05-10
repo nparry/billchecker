@@ -5,7 +5,8 @@ require 'capybara/poltergeist'
 Capybara.javascript_driver = :poltergeist
 Capybara.register_driver :poltergeist do |app|
   Capybara::Poltergeist::Driver.new(app, {
-    :js_errors => false
+    :js_errors => false,
+    :phantomjs_options => ['--ignore-ssl-errors=yes']
   })
 end
 
@@ -61,12 +62,12 @@ module BillChecker
     end
 
     def columbia_gas(username, password, account_id)
-      @session.visit 'https://www.columbiagasohio.com/'
+      @session.visit 'https://www.directlinkeservices.com/nisource/portal/oh'
       @log.info('On Columbia Gas main page')
 
       @session.fill_in 'userID', :with => username
       @session.fill_in 'password', :with => password
-      @session.all('input').find { |el| el[:name] =~ /login/ }.click
+      @session.all('input').find { |el| el[:name] =~ /Submit/ }.click
       @log.info("Columbia Gas login complete for user #{username}")
 
       begin
