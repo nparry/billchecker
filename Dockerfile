@@ -6,6 +6,9 @@ RUN apt-get -y install phantomjs
 RUN apt-get -y install ruby
 RUN apt-get -y install ruby-dev
 RUN apt-get -y install build-essential
+RUN apt-get -y install libxslt-dev
+RUN apt-get -y install libxml2-dev
+RUN apt-get -y install zlib1g-dev
 
 # Speed up Docker images rebuilding during dev
 RUN gem install capybara --no-rdoc --no-ri

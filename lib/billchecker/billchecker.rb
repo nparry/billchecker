@@ -5,8 +5,7 @@ require 'capybara/poltergeist'
 Capybara.javascript_driver = :poltergeist
 Capybara.register_driver :poltergeist do |app|
   Capybara::Poltergeist::Driver.new(app, {
-    :js_errors => false,
-    :phantomjs_options => ['--ignore-ssl-errors=yes'] # Columbia Gas seems to have a broken SSL setup :-p
+    :js_errors => false
   })
 end
 
@@ -27,6 +26,7 @@ module BillChecker
       @log = Logger.new(STDOUT)
       @log.level = Logger::INFO
       @session = Capybara::Session.new(:poltergeist)
+      @session.driver.add_headers('User-Agent' => 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_3) AppleWebKit/600.6.3 (KHTML, like Gecko) Version/8.0.6 Safari/600.6.3')
     end
 
     def shutdown
