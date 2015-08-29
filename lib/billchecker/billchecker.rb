@@ -50,10 +50,10 @@ module BillChecker
     private
 
     def columbus_utility(account_number)
-      @session.visit 'http://waterpayments.columbus.gov/'
+      @session.visit 'https://webpay.columbus.gov/'
       @log.info('On Columbus Utility main page')
 
-      @session.fill_in 'ctl00_ContentSection_txtAccountNumber', :with => account_number
+      @session.fill_in 'txtAccountNumber', :with => account_number
       @session.click_button 'Continue'
       row = @session.first 'tr', text: 'Current amount due'
       @log.info("Found info #{row} for account #{account_number}")
