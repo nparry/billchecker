@@ -54,6 +54,8 @@ docker run \
   nparry/billchecker /usr/local/bin/process-bill-stream
 
 echo "Creating Billchecker jobs"
+crontab -l | { cat; echo "0 * * * * docker pull nparry/billchecker"; } | crontab -
+
 START_OFFSET="0"
 for ACCOUNT_ID in $(redis-cli keys \* | sort); do
   START_OFFSET=$(($START_OFFSET+5))
