@@ -65,7 +65,8 @@ for ACCOUNT_ID in $(redis-cli keys \* | sort); do
     --env=BILLSTORE_KEY=\"$BILLSTORE_KEY\" \
     --env=TWITTER_SETTINGS=\"$TWITTER_SETTINGS\" \
     --env=REDIS_URL=\"redis://billchecker-storage:6379\" \
-    nparry/billchecker /usr/local/bin/get-bill-balance $ACCOUNT_ID"
+    nparry/billchecker /usr/local/bin/get-bill-balance $ACCOUNT_ID \
+    >/var/log/billchecker-$ACCOUNT_ID 2>&1"
 
   crontab -l | { cat; echo "$CRON_SPEC $CRON_CMD"; } | crontab -
 done
