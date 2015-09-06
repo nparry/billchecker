@@ -6,7 +6,7 @@ USER_DATA_FILE="$(dirname $0)/ubuntu-userdata.sh"
 BILLSTORE_KEY=$1
 [ -z $BILLSTORE_KEY ] && echo "Please provide billstore key" && exit 1
 
-AWS_REGION=${2:-"us-east-1"}
+AWS_REGION=${2:-"us-west-2"}
 
 UBUNTU_OWNER="099720109477"
 AMI_NAME="ubuntu/images/ebs-ssd/ubuntu-trusty-14.04-amd64-server-20140927"
