@@ -12,8 +12,8 @@ Gem::Specification.new do |s|
   s.executables << 'store-billchecker-config'
   s.executables << 'process-bill-stream'
 
-  s.add_runtime_dependency 'capybara',  '~> 2.4'
-  s.add_runtime_dependency 'poltergeist',  '~> 1.5'
+  s.add_runtime_dependency 'capybara',  '~> 2.5.0'
+  s.add_runtime_dependency 'poltergeist',  '~> 1.6.0'
   s.add_runtime_dependency 'redis',  '~> 3.1'
   s.add_runtime_dependency 'encryptor',  '~> 1.3.0'
   s.add_runtime_dependency 'twitter',  '~> 5.11.0'
