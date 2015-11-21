@@ -1,7 +1,8 @@
-FROM ubuntu:14.04
+FROM ubuntu:15.10
 
 RUN apt-get update && apt-get upgrade -y
 
+RUN apt-get -y install libssl-dev
 RUN apt-get -y install phantomjs
 RUN apt-get -y install ruby
 RUN apt-get -y install ruby-dev
