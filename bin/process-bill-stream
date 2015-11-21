@@ -2,10 +2,5 @@
 
 require 'billchecker'
 
-store = BillStore.new
-notifier = BillNotifier.new
-streamer = BillStreamer.new(store, notifier)
-
-streamer.process_stream
-
+BillStreamer.process_stream
 

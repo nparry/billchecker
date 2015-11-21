@@ -26,11 +26,8 @@ curl -s https://s3.amazonaws.com/billchecker.nparry.com/redis-dump.rdb > /var/ru
 chown -R ubuntu:ubuntu /var/run/redis
 chmod a+rw /var/run/redis/dump.rdb
 
-mkdir -p /var/lib/billchecker
-curl -s https://s3.amazonaws.com/billchecker.nparry.com/twitter_settings.base64.des3 > /var/lib/billchecker/twitter_settings.base64.des3
-
 BILLSTORE_KEY="BILLSTORE_KEY_VALUE"
-TWITTER_SETTINGS=$(cat /var/lib/billchecker/twitter_settings.base64.des3 | openssl des3 -d -k $BILLSTORE_KEY)
+SLACK_KEY="SLACK_KEY_VALUE"
 
 echo "Starting Redis"
 docker run \
@@ -49,7 +46,7 @@ docker run \
   --name=billstreamer \
   --link=billchecker-storage:billchecker-storage \
   --env BILLSTORE_KEY="$BILLSTORE_KEY" \
-  --env TWITTER_SETTINGS="$TWITTER_SETTINGS" \
+  --env SLACK_API_TOKEN="$SLACK_KEY" \
   --env REDIS_URL="redis://billchecker-storage:6379" \
   nparry/billchecker /usr/local/bin/process-bill-stream
 
@@ -65,7 +62,7 @@ for ACCOUNT_ID in $(redis-cli keys \* | sort); do
     --name=billchecker-$ACCOUNT_ID \
     --link=billchecker-storage:billchecker-storage \
     --env=BILLSTORE_KEY=\"$BILLSTORE_KEY\" \
-    --env=TWITTER_SETTINGS=\"$TWITTER_SETTINGS\" \
+    --env=SLACK_API_TOKEN=\"$SLACK_KEY\" \
     --env=REDIS_URL=\"redis://billchecker-storage:6379\" \
     nparry/billchecker /usr/local/bin/get-bill-balance $ACCOUNT_ID \
     >/var/log/billchecker-$ACCOUNT_ID 2>&1"

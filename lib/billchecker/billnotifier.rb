@@ -1,4 +1,3 @@
-require 'twitter'
 require 'base64'
 require 'json'
 
@@ -6,11 +5,7 @@ class BillNotifier
   def initialize
     @log = Logger.new(STDOUT)
     @log.level = Logger::INFO
-    @config = begin
-      JSON.parse(Base64.decode64(ENV["TWITTER_SETTINGS"]), :symbolize_names => true)
-    rescue
-      raise "Unable to decode TWITTER_SETTINGS"
-    end
+    @target_user = 'nparry'
   end
 
   def balance_unchanged(name, old_balance)
@@ -21,35 +16,20 @@ class BillNotifier
     notify(["Balance for #{name} changed from '#{old_balance}' to '#{new_balance}'"])
   end
 
-  def reply_to_inquiry(sender, messages)
-    if sender == @config[:user_to_notify]
-      notify(messages)
-    else
-      @log.info("Ignoring inquiry from #{sender}, response was #{messages}")
-    end
-  end
-
-  def configure_twitter(config)
-    config.consumer_key        = @config[:consumer_key]
-    config.consumer_secret     = @config[:consumer_secret]
-    config.access_token        = @config[:access_token]
-    config.access_token_secret = @config[:access_token_secret]
-  end
-
-  def screen_name
-    @screen_name ||= twitter_rest_client.verify_credentials.screen_name
-  end
-
   private
 
   def notify(messages)
-    @log.info("Sending DM to #{@config[:user_to_notify]}: #{messages}")
+    @log.info("Sending DM to #{@target_user}: #{messages}")
     messages.each do |msg|
-      twitter_rest_client.create_direct_message(@config[:user_to_notify], msg)
+      target_user = slack_client.users_list['members'].find { |user| user['name'] == @target_user }
+      im = slack_client.im_list['ims'].find { |im| im['user'] == target_user['id'] }
+      slack_client.chat_postMessage(channel: im['id'], text: msg, as_user: true)
     end
   end
 
-  def twitter_rest_client
-    Twitter::REST::Client.new { |config| configure_twitter(config) }
+  def slack_client
+    @client ||= Slack::Web::Client.new(token: ENV['SLACK_API_TOKEN']).tap do |client|
+      client.auth_test
+    end
   end
 end
