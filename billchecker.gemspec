@@ -17,5 +17,6 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'redis',  '~> 3.1'
   s.add_runtime_dependency 'encryptor',  '~> 1.3.0'
   s.add_runtime_dependency 'slack-ruby-bot',  '~> 0.4.5'
+  s.add_runtime_dependency 'bundler',  '< 2.0'
 end
 

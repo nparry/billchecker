@@ -2,6 +2,7 @@ PATH
   remote: .
   specs:
     billchecker (0.0.2)
+      bundler (< 2.0)
       capybara (~> 2.5.0)
       encryptor (~> 1.3.0)
       poltergeist (~> 1.6.0)

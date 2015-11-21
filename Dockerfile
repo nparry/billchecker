@@ -16,6 +16,7 @@ RUN gem install poltergeist --no-rdoc --no-ri
 RUN gem install redis --no-rdoc --no-ri
 RUN gem install encryptor --no-rdoc --no-ri
 RUN gem install slack-ruby-bot --no-rdoc --no-ri
+RUN gem install bundler --no-rdoc --no-ri
 
 RUN mkdir -p /tmp/billchecker_gem
 COPY . /tmp/billchecker_gem/
