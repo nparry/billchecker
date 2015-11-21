@@ -30,28 +30,28 @@ BILLSTORE_KEY="BILLSTORE_KEY_VALUE"
 SLACK_KEY="SLACK_KEY_VALUE"
 
 echo "Starting Redis"
-docker run \
+su -l ubuntu -c 'docker run \
   --detach \
   --name=billchecker-storage \
   --publish=6379:6379 \
   --volume=/var/run/redis:/data \
-  redis
+  redis'
 
 echo "Waiting for Redis to start"
 until redis-cli ping | grep PONG; do sleep 10; done
 
 echo "Starting BillStreamer"
-docker run \
+su -l ubuntu -c "docker run \
   --detach \
   --name=billstreamer \
   --link=billchecker-storage:billchecker-storage \
-  --env BILLSTORE_KEY="$BILLSTORE_KEY" \
-  --env SLACK_API_TOKEN="$SLACK_KEY" \
-  --env REDIS_URL="redis://billchecker-storage:6379" \
-  nparry/billchecker /usr/local/bin/process-bill-stream
+  --env BILLSTORE_KEY=$BILLSTORE_KEY \
+  --env SLACK_API_TOKEN=$SLACK_KEY \
+  --env REDIS_URL='redis://billchecker-storage:6379' \
+  nparry/billchecker /usr/local/bin/process-bill-stream"
 
 echo "Creating Billchecker jobs"
-crontab -l | { cat; echo "0 * * * * docker pull nparry/billchecker"; } | crontab -
+su -l ubuntu -c 'crontab -l' | { cat; echo "0 * * * * docker pull nparry/billchecker"; } | su -l ubuntu -c 'crontab -'
 
 START_OFFSET="0"
 for ACCOUNT_ID in $(redis-cli keys \* | sort); do
@@ -67,5 +67,5 @@ for ACCOUNT_ID in $(redis-cli keys \* | sort); do
     nparry/billchecker /usr/local/bin/get-bill-balance $ACCOUNT_ID \
     >/var/log/billchecker-$ACCOUNT_ID 2>&1"
 
-  crontab -l | { cat; echo "$CRON_SPEC $CRON_CMD"; } | crontab -
+  su -l ubuntu -c 'crontab -l' | { cat; echo "$CRON_SPEC $CRON_CMD"; } | su -l ubuntu -c 'crontab -'
 done
