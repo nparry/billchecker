@@ -30,7 +30,7 @@ Description=Billstreamer bot responding to bill inquiries
 
 [Service]
 User=core
-ExecStart=/usr/bin/docker run --name=billstreamer --link=billchecker-storage:billchecker-storage --env BILLSTORE_KEY=$BILLSTORE_KEY --env SLACK_API_TOKEN=$SLACK_KEY \ --env REDIS_URL='redis://billchecker-storage:6379' nparry/billchecker /usr/local/bin/process-bill-stream
+ExecStart=/usr/bin/docker run --name=billstreamer --link=billchecker-storage:billchecker-storage --env BILLSTORE_KEY=$BILLSTORE_KEY --env SLACK_API_TOKEN=$SLACK_KEY --env REDIS_URL='redis://billchecker-storage:6379' nparry/billchecker /usr/local/bin/process-bill-stream
 END_OF_UNIT
 systemctl start billstreamer.service
 
@@ -50,7 +50,7 @@ END_OF_UNIT
 
   cat > /etc/systemd/system/billchecker-check-$ACCOUNT_ID.timer <<END_OF_UNIT
 [Unit]
-Description=Run billchecker for $ACCOUNT_ID on a schedule
+Description=Run billchecker for account $ACCOUNT_ID on a schedule
 
 [Timer]
 OnCalendar=0/4:$START_OFFSET
