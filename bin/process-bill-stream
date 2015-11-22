@@ -5,7 +5,6 @@ module Bundler
   def self.require(_, _)
     # no-op hack
   end
-
 end
 require 'billchecker'
 
