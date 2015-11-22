@@ -11,13 +11,15 @@ SLACK_KEY=$2
 
 AWS_REGION=${3:-"us-west-2"}
 
-UBUNTU_OWNER="099720109477"
-AMI_NAME="ubuntu/images/ebs-ssd/ubuntu-trusty-14.04-amd64-server-20140927"
-AMI_ID=$(aws ec2 describe-images \
-  --region $AWS_REGION \
-  --owners $UBUNTU_OWNER \
-  --filters "Name=name,Values=$AMI_NAME" \
-  | grep '"ImageId":' | cut -d\" -f4)
+#UBUNTU_OWNER="099720109477"
+#AMI_NAME="ubuntu/images/ebs-ssd/ubuntu-trusty-14.04-amd64-server-20140927"
+#AMI_NAME="ubuntu/images/ebs-ssd/ubuntu-wily-15.10-amd64-server-20151106"
+#AMI_ID=$(aws ec2 describe-images \
+#  --region $AWS_REGION \
+#  --owners $UBUNTU_OWNER \
+#  --filters "Name=name,Values=$AMI_NAME" \
+#  | grep '"ImageId":' | cut -d\" -f4)
+AMI_ID="ami-a2ebfcc3"
 [ -z "$AMI_ID" ] && echo "Unable to location Ubuntu AMI" && exit 1
 
 USER_DATA=$(
