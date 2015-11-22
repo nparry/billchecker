@@ -1,6 +1,6 @@
 #!/bin/bash
 
-USER_DATA_FILE="$(dirname $0)/ubuntu-userdata.sh"
+USER_DATA_FILE="$(dirname $0)/coreos-userdata.sh"
 [ ! -f $USER_DATA_FILE ] &&  echo "Unable to find $USER_DATA_FILE" && exit 1
 
 BILLSTORE_KEY=$1
