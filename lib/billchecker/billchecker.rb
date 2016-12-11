@@ -72,7 +72,7 @@ module BillChecker
 
       begin
         @session.select account_id
-        @session.click_button 'G0'
+        @session.click_button 'GO'
         element = @session.all('.transactionInstructions').find { |el| el[:id] =~ /CurrentBalance/ }
         @log.info("Found info #{element} for account #{username}:#{account_id}")
 
