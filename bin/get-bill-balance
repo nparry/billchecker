@@ -9,7 +9,7 @@ end
 require 'billchecker'
 
 account_name = ARGV[0]
-raise "Account name must be specified" if account_name.nil?
+raise 'Account name must be specified' if account_name.nil?
 
 BillChecker.session do |billchecker|
   store = BillStore.new
@@ -18,10 +18,10 @@ BillChecker.session do |billchecker|
   info = store.get_account_info(account_name)
   raise "Account info missing for #{account_name}" if info.nil?
 
-  old_balance = store.get_balance(account_name) || "unknown"
+  old_balance = store.get_balance(account_name) || 'unknown'
   new_balance = billchecker.get_balance(info)
 
-  if old_balance == new_balance then
+  if old_balance == new_balance
     notifier.balance_unchanged(info[:display_name], old_balance)
     store.balance_unchanged(account_name)
   else
@@ -29,4 +29,3 @@ BillChecker.session do |billchecker|
     store.balance_changed(account_name, new_balance)
   end
 end
-

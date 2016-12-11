@@ -9,4 +9,3 @@ end
 require 'billchecker'
 
 BillStreamer.process_stream
-

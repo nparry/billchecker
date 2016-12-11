@@ -4,10 +4,8 @@ require 'capybara/poltergeist'
 
 Capybara.javascript_driver = :poltergeist
 Capybara.register_driver :poltergeist do |app|
-  Capybara::Poltergeist::Driver.new(app, {
-    :js_errors => false,
-    :phantomjs_options => ['--ignore-ssl-errors=yes']
-  })
+  Capybara::Poltergeist::Driver.new(app, js_errors: false,
+                                         phantomjs_options: ['--ignore-ssl-errors=yes'])
 end
 
 module BillChecker
@@ -53,7 +51,7 @@ module BillChecker
       @session.visit 'https://webpay.columbus.gov/'
       @log.info('On Columbus Utility main page')
 
-      @session.fill_in 'txtAccountNumber', :with => account_number
+      @session.fill_in 'txtAccountNumber', with: account_number
       @session.click_button 'Continue'
       row = @session.first 'tr', text: 'Current amount due'
       @log.info("Found info #{row} for account #{account_number}")
@@ -65,8 +63,8 @@ module BillChecker
       @session.visit 'https://www.directlinkeservices.com/nisource/portal/oh'
       @log.info('On Columbia Gas main page')
 
-      @session.fill_in 'userID', :with => username
-      @session.fill_in 'password', :with => password
+      @session.fill_in 'userID', with: username
+      @session.fill_in 'password', with: password
       @session.all('input').find { |el| el[:name] =~ /Submit/ }.click
       @log.info("Columbia Gas login complete for user #{username}")
 
@@ -86,8 +84,8 @@ module BillChecker
       @session.visit 'https://login.wowway.com/'
       @log.info('On WOW main page')
 
-      @session.fill_in 'ctl00_MainContent_txtLoginUserName', :with => username
-      @session.fill_in 'ctl00_MainContent_txtLoginPassword', :with => password
+      @session.fill_in 'ctl00_MainContent_txtLoginUserName', with: username
+      @session.fill_in 'ctl00_MainContent_txtLoginPassword', with: password
       @session.click_link 'Log In'
       @log.info("WOW login complete for user #{username}")
 
@@ -112,4 +110,3 @@ module BillChecker
     end
   end
 end
-

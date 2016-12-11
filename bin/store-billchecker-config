@@ -5,12 +5,11 @@ require 'json'
 
 filename = ARGV[0] || '-'
 
-json_source = if filename == '-' then STDIN else File.new(filename) end
+json_source = filename == '-' ? STDIN : File.new(filename)
 json = JSON.load(json_source)
 
-store = BillStore.new()
+store = BillStore.new
 
 json.each do |name, value|
   store.set_account_info(name, value)
 end
-

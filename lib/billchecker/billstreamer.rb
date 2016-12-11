@@ -23,26 +23,26 @@ module BillStreamer
     end
 
     def self.non_zero_bill_balances
-      non_zeros = store.all_account_info.
-        map { |name, info| [info[:display_name], store.get_balance(name)] }.
-        find_all { |pair| !pair.last.nil? && pair.last > 0.01 }.
-        map { |pair| "#{pair.first} is #{pair.last}" }
+      non_zeros = store.all_account_info
+                       .map { |name, info| [info[:display_name], store.get_balance(name)] }
+                       .find_all { |pair| !pair.last.nil? && pair.last > 0.01 }
+                       .map { |pair| "#{pair.first} is #{pair.last}" }
       if non_zeros.empty?
-        [ "All accounts have 0 balance" ]
+        ['All accounts have 0 balance']
       else
         non_zeros
       end
     end
 
     def self.most_out_of_date_account
-      most_out_of_date = store.all_account_info.
-        map { |name, info| [info[:display_name], store.get_last_check_time(name)] }.
-        sort { |p1, p2| p1.last <=> p2.last }.
-        first
+      most_out_of_date = store.all_account_info
+                              .map { |name, info| [info[:display_name], store.get_last_check_time(name)] }
+                              .sort_by(&:last)
+                              .first
       if most_out_of_date.nil?
-        [ "Unable to determine most out of date account" ]
+        ['Unable to determine most out of date account']
       else
-        [ "Most out of date account is #{most_out_of_date.first} @ #{most_out_of_date.last}" ]
+        ["Most out of date account is #{most_out_of_date.first} @ #{most_out_of_date.last}"]
       end
     end
 
@@ -51,4 +51,3 @@ module BillStreamer
     end
   end
 end
-

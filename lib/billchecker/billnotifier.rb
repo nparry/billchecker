@@ -28,8 +28,6 @@ class BillNotifier
   end
 
   def slack_client
-    @client ||= Slack::Web::Client.new(token: ENV['SLACK_API_TOKEN']).tap do |client|
-      client.auth_test
-    end
+    @client ||= Slack::Web::Client.new(token: ENV['SLACK_API_TOKEN']).tap(&:auth_test)
   end
 end
