@@ -86,9 +86,9 @@ module BillChecker
       @session.visit 'https://login.wowway.com/'
       @log.info('On WOW main page')
 
-      @session.fill_in 'txtLoginUserName', :with => username
-      @session.fill_in 'txtLoginPassword', :with => password
-      @session.click_button 'imgbLogin'
+      @session.fill_in 'ctl00_MainContent_txtLoginUserName', :with => username
+      @session.fill_in 'ctl00_MainContent_txtLoginPassword', :with => password
+      @session.click_link 'Log In'
       @log.info("WOW login complete for user #{username}")
 
       for i in 1..10
@@ -107,7 +107,7 @@ module BillChecker
         end
         raise 'Unable to locate WOW amount due'
       ensure
-        @session.click_button 'ctl00_ctlHeader_imgbLogoutButton'
+        @session.click_link 'Logout'
       end
     end
   end
