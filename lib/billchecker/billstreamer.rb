@@ -11,7 +11,7 @@ module BillStreamer
   class BillStatus < SlackRubyBot::Commands::Base
     def self.call(client, data, _)
       logger.info("Got billstatus message #{data.inspect}")
-      user = client.users.find { |u| u['id'] == data.user }
+      user = client.users[data.user]
       replies = if user && user['name'] == 'nparry'
                   [non_zero_bill_balances, most_out_of_date_account].flatten
                 else
